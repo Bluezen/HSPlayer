@@ -196,8 +196,8 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
     [self.playerItem removeObserver:self forKeyPath:@"duration"];
     [self.playerLayer removeObserver:self forKeyPath:@"readyForDisplay"];
 
-    if ([self.player respondsToSelector:@selector(allowsAirPlayVideo)])
-        [self.player removeObserver:self forKeyPath:@"airPlayVideoActive"];
+    if ([self.player respondsToSelector:@selector(allowsExternalPlayback)])
+        [self.player removeObserver:self forKeyPath:@"externalPlaybackActive"];
     
 	[self.player pause];
 }
@@ -212,14 +212,15 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
     [(AVPlayerLayer *) [self layer] setPlayer:player];
     
     // Optimize for airplay if possible
-    if ([player respondsToSelector:@selector(allowsAirPlayVideo)]) {
-        [player setAllowsAirPlayVideo:YES];
-        [player setUsesAirPlayVideoWhileAirPlayScreenIsActive:YES];
+    if ([player respondsToSelector:@selector(allowsExternalPlayback)]) {
+        [player setAllowsExternalPlayback:YES];
+        [player setUsesExternalPlaybackWhileExternalScreenIsActive:YES];
         
         [player addObserver:self
-                 forKeyPath:@"airPlayVideoActive"
+                 forKeyPath:@"externalPlaybackActive"
                     options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
                     context:HSPlayerViewPlayerAirPlayVideoActiveObservationContext];
+        
     }
 }
 
@@ -329,7 +330,7 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
         [_currentPlayerTimeLabel setBackgroundColor:[UIColor clearColor]];
         [_currentPlayerTimeLabel setTextColor:[UIColor whiteColor]];
         [_currentPlayerTimeLabel setFont:[UIFont systemFontOfSize:12.]];
-        [_currentPlayerTimeLabel setTextAlignment:UITextAlignmentCenter];
+        [_currentPlayerTimeLabel setTextAlignment:NSTextAlignmentCenter];
     }
     
     return _currentPlayerTimeLabel;
@@ -341,7 +342,7 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
         [_remainingPlayerTimeLabel setBackgroundColor:[UIColor clearColor]];
         [_remainingPlayerTimeLabel setTextColor:[UIColor whiteColor]];
         [_remainingPlayerTimeLabel setFont:[UIFont systemFontOfSize:12.]];
-        [_remainingPlayerTimeLabel setTextAlignment:UITextAlignmentCenter];
+        [_remainingPlayerTimeLabel setTextAlignment:NSTextAlignmentCenter];
         [_remainingPlayerTimeLabel setAutoresizingMask:(UIViewAutoresizingFlexibleLeftMargin)];
     }
     
@@ -610,8 +611,8 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
     NSInteger durationMinutes = currentDurationSeconds / 60;
     NSInteger durationHours = durationMinutes / 60;
     
-    [self.currentPlayerTimeLabel setText:[NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds]];
-    [self.remainingPlayerTimeLabel setText:[NSString stringWithFormat:@"-%02d:%02d:%02d", durationHours, durationMinutes, durationSeconds]];
+    [self.currentPlayerTimeLabel setText:[NSString stringWithFormat:@"%02ld:%02ld:%02ld", (long)hours, (long)minutes, (long)seconds]];
+    [self.remainingPlayerTimeLabel setText:[NSString stringWithFormat:@"-%02ld:%02ld:%02ld", (long)durationHours, (long)durationMinutes, (long)durationSeconds]];
     
     [self.scrubberControlSlider setMinimumValue:0.];
     [self.scrubberControlSlider setMaximumValue:duration];
