@@ -96,6 +96,8 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
         [self setFullScreen:YES];
         
         [self setRestoreAfterScrubbingRate:1.];
+        
+        [self setShouldAutoplay:YES];
     }
     
     return self;
@@ -122,7 +124,7 @@ static void *HSPlayerViewPlayerLayerReadyForDisplayObservationContext = &HSPlaye
                 
                 // Enable buttons & scrubber
                 
-                if (!self.isScrubbing)
+                if (!self.isScrubbing  && self.shouldAutoplay)
                   [self setPlaying:YES];
             }
             break;

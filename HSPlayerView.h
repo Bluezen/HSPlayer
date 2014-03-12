@@ -26,4 +26,6 @@
 
 // Hides statusBar if true, defaults to YES
 @property (nonatomic, assign) BOOL fullScreen;
+// Default to YES
+@property (nonatomic, assign) BOOL shouldAutoplay;
 @end
